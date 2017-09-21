@@ -1,11 +1,26 @@
 # SafeExStruct [![Build Status](https://travis-ci.org/simoexpo/SafeExStruct.svg?branch=master)](https://travis-ci.org/simoexpo/SafeExStruct?branch=master) [![Coverage Status](https://coveralls.io/repos/github/simoexpo/SafeExStruct/badge.svg?branch=master)](https://coveralls.io/github/simoexpo/SafeExStruct?branch=master)
 
-**TODO: Add description**
+## In progress
+
+SafeExStruct help to create and validate struct in elixir defining functions to assist the creation of a struct and check its validity.
+
+To define a struct you need to create a module and define a map `@safe_struct` of `key` and `type`.
+
+```elixir
+@safe_struct %{
+    string: :binary,
+    num: :integer
+ }
+```
+
+You can then call the function `SafeExStruct.generate` to add via macro the struct definition and 2 functions:
+* `is_valid`
+* `create`
 
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `struct_checker` to your list of dependencies in `mix.exs`:
+by adding `safeexstruct` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
