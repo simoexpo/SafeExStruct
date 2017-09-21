@@ -1,4 +1,4 @@
-# SafeExStruct
+# SafeExStruct [![Coverage Status](https://coveralls.io/repos/github/simoexpo/SafeExStruct/badge.svg?branch=master)](https://coveralls.io/github/simoexpo/SafeExStruct?branch=master)
 
 **TODO: Add description**
 
