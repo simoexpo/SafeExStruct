@@ -33,6 +33,14 @@ Explanation:
 * `is_valid(struct) :: boolean`: returns true if the struct is valid, i.e. if its fields types are the same of the fields types defined in `@fields`.
 * `create(map) :: {:ok, struct} | {:error, :invalid_args}`: creates a type-safe struct given a map `field_name -> value` or return an error if at least one of the given value doesn't suite the field type defined in `@fields`.
 
+```elixir
+SimpleStruct.is_valid(%SimpleStruct{string: "name", num: 1})      # -> true
+SimpleStruct.is_valid(%SimpleStruct{string: "name", num: 1.0})    # -> false
+
+SimpleStruct.create(%{string: "name", num: 1})    # -> {:ok, %SimpleStruct{string: "simple", num: 1}}
+SimpleStruct.create(%{string: "name", num: 1.0})  # -> {:error, :invalid_args}
+```
+
 ### Available types:
 
 * atom -> `:atom`
