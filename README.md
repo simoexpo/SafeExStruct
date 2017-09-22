@@ -152,6 +152,21 @@ end
 ```
 Define a struct with two fields `s` and `t` respectively of type `binary` and `tuple`. The tuple should have two elements respectively of type `binary` and `integer`.
 
+#### Optional-field struct
+```elixir
+defmodule OptionalSimpleStruct do
+    require SafeExStruct
+
+    @fields %{
+      s: :binary,
+      n: {:number, :optional, 0}
+    }
+
+    SafeExStruct.generate
+end
+```
+Define a struct with a mandatory field `s` of type `binary` and an optional field `n` of type `number` with defualt value `0`.
+
 ## Installation
 
 ```elixir
