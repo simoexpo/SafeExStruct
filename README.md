@@ -1,35 +1,155 @@
 # SafeExStruct [![Build Status](https://travis-ci.org/simoexpo/SafeExStruct.svg?branch=master)](https://travis-ci.org/simoexpo/SafeExStruct?branch=master) [![Coverage Status](https://coveralls.io/repos/github/simoexpo/SafeExStruct/badge.svg?branch=master)](https://coveralls.io/github/simoexpo/SafeExStruct?branch=master)
 
-## In progress
+## What is it?
 
-SafeExStruct help to create and validate struct in elixir defining functions to assist the creation of a struct and check its validity.
+SafeExStruct is a small library that provides help to **create** and **validate typed struct** in elixir.
 
-To define a struct you need to create a module and define a map `@safe_struct` of `key` and `type`.
+## How does it work?
+
+SafeExStruct uses *macro* to define functions to assist the creation of a struct and check its validity. It requires the user to define a map (`@fields`) containing the struct fields with their relative types and then with the invocation of a single function (`SafeExStruct.generate/0`) it will automatically generate the struct and all the usefull fucntions.
+
+### Module definition:
 
 ```elixir
-@safe_struct %{
-    string: :binary,
-    num: :integer
- }
+defmodule SimpleStruct do
+    require SafeExStruct
+
+    @fields %{
+      string: :binary,
+      num: :integer
+    }
+
+    SafeExStruct.generate
+end
 ```
 
-You can then call the function `SafeExStruct.generate` to add via macro the struct definition and 2 functions:
-* `is_valid`
-* `create`
+Explanation:
+* `require SafeExStruct` needs to be specified to access the `SafeExStruct` macro.
+* `@fields` define the struct with a map `field_name -> field_type`.
+* `SafeExStruct.generate` add the creation and validation functions to the module.
+
+### Generated functions:
+
+* `is_valid(struct) :: boolean`: returns true if the struct is valid, i.e. if its fields types are the same of the fields types defined in `@fields`.
+* `create(map) :: {:ok, struct} | {:error, :invalid_args}`: creates a type-safe struct given a map `field_name -> value` or return an error if at least one of the given value doesn't suite the field type defined in `@fields`.
+
+### Available types:
+
+* atom -> `:atom`
+* bitstring -> `:bitstring`
+* boolean -> `:boolean`
+* float -> `:float`
+* function -> `:function`
+* integer -> `:integer`
+* list -> `:list` | `{:list, elem_type}`
+* map -> `:map`
+* number -> `:number`
+* nil -> `:nil`
+* pid -> `:pid`
+* port -> `:port`
+* reference -> `:reference`
+* struct -> `__MODULE__` of struct.
+* tuple -> `:tuple` | `{:tuple, tuple_of_types_of_tuple_elem`}
+
+## Examples
+
+#### Simple struct:
+```elixir
+defmodule SimpleStruct do
+    require SafeExStruct
+
+    @fields %{
+      string: :binary,
+      num: :integer
+    }
+
+    SafeExStruct.generate
+end
+```
+Define a struct with two fields `string` and `num` respectively of type `binary` and `integer`.
+
+#### Struct-field struct:
+```elixir
+defmodule StructFieldStruct do
+    require SafeExStruct
+
+    @fields %{
+      string: :binary,
+      num: :integer,
+      struct: SimpleStruct
+    }
+
+    SafeExStruct.generate
+end
+```
+Define a struct with three fields `string`, `num` and `struct` respectively of type `binary` and `integer` and `SimpleStruct`.
+
+#### List-field struct without list type:
+```elixir
+defmodule SimpleListStruct do
+    require SafeExStruct
+
+    @fields %{
+      s: :binary,
+      l: :list
+    }
+
+    SafeExStruct.generate
+end
+```
+Define a struct with two fields `s` and `l` respectively of type `binary` and `list` without specify the list elements type.
+
+#### List-field struct with list type:
+```elixir
+defmodule AdvancedListStruct do
+    require SafeExStruct
+
+    @fields %{
+      s: :binary,
+      l: {:list, :integer}
+    }
+
+    SafeExStruct.generate
+end
+```
+Define a struct with two fields `s` and `l` respectively of type `binary` and `list` with `integer` elements.
+
+#### Tuple-field struct without type:
+```elixir
+defmodule SimpleTupleStruct do
+    require SafeExStruct
+
+    @fields %{
+      s: :binary,
+      t: :tuple
+    }
+
+    SafeExStruct.generate
+end
+```
+Define a struct with two fields `s` and `t` respectively of type `binary` and `tuple` without specify the tuple elements types.
+
+#### Tuple-field struct with type:
+```elixir
+defmodule AdvancedTupleStruct do
+    require SafeExStruct
+
+    @fields %{
+      s: :binary,
+      t: {:tuple, {:binary, :integer}}
+    }
+
+    SafeExStruct.generate
+end
+```
+Define a struct with two fields `s` and `t` respectively of type `binary` and `tuple`. The tuple should have two elements respectively of type `binary` and `integer`.
 
 ## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `safeexstruct` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:safeexstruct, "~> 0.1.0"}
+    {:safeexstruct, git: "git://github.com/simoexpo/SafeExStruct.git"}
   ]
 end
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/struct_checker](https://hexdocs.pm/struct_checker).
