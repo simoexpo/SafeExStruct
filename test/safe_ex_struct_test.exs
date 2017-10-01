@@ -11,7 +11,7 @@ defmodule SafeExStructTest do
       num: :integer
     }
 
-    SafeExStruct.create_struct
+    SafeExStruct.generate
   end
 
   defmodule NumberStruct do
@@ -22,7 +22,7 @@ defmodule SafeExStructTest do
       num: :number
     }
 
-    SafeExStruct.create_struct
+    SafeExStruct.generate
   end
 
   defmodule BitstringStruct do
@@ -33,7 +33,7 @@ defmodule SafeExStructTest do
       string: :bitstring
     }
 
-    SafeExStruct.create_struct
+    SafeExStruct.generate
   end
 
   defmodule ComplexStruct do
@@ -46,7 +46,7 @@ defmodule SafeExStructTest do
       other: SimpleStruct
     }
 
-    SafeExStruct.create_struct
+    SafeExStruct.generate
   end
 
   test "SafeExStruct.create_struct add to a module a struct definition based on @safe_struct map" do
@@ -66,8 +66,8 @@ defmodule SafeExStructTest do
   test "SafeExStruct.create_struct add to a module a function create_struct that create a struct from a map only if it's valid" do
     good_map = %{string: "name", num: 18}
     bad_map = %{}
-    assert SimpleStruct.create_struct(good_map) == {:ok, %SimpleStruct{string: "name", num: 18}}
-    assert SimpleStruct.create_struct(bad_map) == {:error, :invalid_args}
+    assert SimpleStruct.create(good_map) == {:ok, %SimpleStruct{string: "name", num: 18}}
+    assert SimpleStruct.create(bad_map) == {:error, :invalid_args}
   end
 
   test "is_valid should know that integer and float are number" do
