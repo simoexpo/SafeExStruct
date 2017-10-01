@@ -30,11 +30,16 @@ defmodule SafeExStruct do
       end
 
       def create(quote do unquote(x) end) do
-        new_struct = struct(quote do unquote(__MODULE__) end, quote do unquote(x) end)
-        if is_valid(new_struct) do
-          {:ok, new_struct}
-        else
-          {:error, :invalid_args}
+        cond do
+          length(Map.keys(quote do unquote(x) end)) == length(Map.keys(@safe_struct)) ->
+            new_struct = struct(quote do unquote(__MODULE__) end, quote do unquote(x) end)
+            if is_valid(new_struct) do
+              {:ok, new_struct}
+            else
+              {:error, :invalid_args}
+            end
+          true ->
+            {:error, :invalid_args}
         end
       end
     end

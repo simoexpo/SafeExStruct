@@ -72,9 +72,11 @@ defmodule SafeExStructTest do
 
   test "SafeExStruct.create_struct add to a module a function create_struct that create a struct from a map only if it's valid" do
     good_map = %{string: "name", num: 18}
-    bad_map = %{}
+    bad_map = %{string: "name"}
+    also_bad_map = %{string: "name", num: 18, badkey: nil}
     assert SimpleStruct.create(good_map) == {:ok, %SimpleStruct{string: "name", num: 18}}
     assert SimpleStruct.create(bad_map) == {:error, :invalid_args}
+    assert SimpleStruct.create(also_bad_map) == {:error, :invalid_args}
   end
 
   test "is_valid should know that integer and float are number" do
