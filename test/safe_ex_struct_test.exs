@@ -3,7 +3,6 @@ defmodule SafeExStructTest do
   doctest SafeExStruct
 
   defmodule SimpleStruct do
-    @behaviour SafeExStruct
     require SafeExStruct
 
     @safe_struct %{
@@ -15,7 +14,6 @@ defmodule SafeExStructTest do
   end
 
   defmodule NumberStruct do
-    @behaviour SafeExStruct
     require SafeExStruct
 
     @safe_struct %{
@@ -26,7 +24,6 @@ defmodule SafeExStructTest do
   end
 
   defmodule BitstringStruct do
-    @behaviour SafeExStruct
     require SafeExStruct
 
     @safe_struct %{
@@ -37,13 +34,23 @@ defmodule SafeExStructTest do
   end
 
   defmodule ComplexStruct do
-    @behaviour SafeExStruct
     require SafeExStruct
 
     @safe_struct %{
       string: :binary,
       num: :number,
       other: SimpleStruct
+    }
+
+    SafeExStruct.generate
+  end
+
+  defmodule TupleStruct do
+    require SafeExStruct
+
+    @safe_struct %{
+      s: :binary,
+      t: {:tuple, {:binary, :integer}}
     }
 
     SafeExStruct.generate
@@ -86,6 +93,13 @@ defmodule SafeExStructTest do
     bad_complex_struct = %ComplexStruct{string: "name", num: 1, other: bad_simple_struct}
     assert ComplexStruct.is_valid(good_complex_struct)
     assert ComplexStruct.is_valid(bad_complex_struct) == false
+  end
+
+  test "is_valid should check types pf tuple elements" do
+    good_tuple_struct = %TupleStruct{s: "s", t: {"1", 1}}
+    bad_tuple_struct = %TupleStruct{s: "s", t: {1, 1}}
+    assert TupleStruct.is_valid(good_tuple_struct)
+    assert TupleStruct.is_valid(bad_tuple_struct) == false
   end
 
 end

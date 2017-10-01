@@ -64,7 +64,9 @@ defmodule SafeExStruct do
       is_pid(self)        -> :pid
       is_port(self)       -> :port
       is_reference(self)  -> :reference
-      is_tuple(self)      -> :tuple
+      is_tuple(self)      -> {:tuple, Tuple.to_list(self)
+                             |> Enum.map(&typeof(&1))
+                             |> Enum.reduce({}, &Tuple.append(&2, &1))}
       true                -> :other
     end
   end
@@ -73,6 +75,13 @@ defmodule SafeExStruct do
     case t1 do
       :number     -> t2 == :number || t2 == :integer || t2 == :float
       :bitstring  -> t2 == :bitstring || t2 == :binary
+      {:tuple, t1_types} when is_tuple(t1_types) ->
+        case t2 do
+          {:tuple, t2_types} when is_tuple(t1_types) ->
+            List.zip([Tuple.to_list(t1_types), Tuple.to_list(t2_types)])
+            |> Enum.all?(fn x -> is_compatible(elem(x, 0), elem(x, 1)) end)
+          _ -> false
+        end
       _ -> t1 == t2
     end
   end
