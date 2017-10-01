@@ -6,6 +6,7 @@ defmodule SafeExStruct do
 
       @fields_types @fields |> Map.to_list |> Enum.map(fn x ->
                     case x do
+                      {key, {t, :optional, nil}} -> {key, {:nil, t}}
                       {key, {t, :optional, _}} -> {key, t}
                       t -> t
                     end
@@ -13,6 +14,8 @@ defmodule SafeExStruct do
 
       @optional_fields @fields |> Map.to_list |> Enum.map(fn x ->
                               case x do
+                                {key, {t, :optional, nil}} ->
+                                  {key, nil}
                                 {key, {t, :optional, val}} ->
                                   if (unquote(__MODULE__).is_compatible(t, unquote(__MODULE__).typeof(val))) do
                                     {key, val}
@@ -44,6 +47,7 @@ defmodule SafeExStruct do
         cond do
           map_size(new_map) == map_size(@fields) ->
             new_struct = struct(__MODULE__, new_map)
+            #IO.inspect(new_struct)
             if is_valid(new_struct) do
               {:ok, new_struct}
             else
@@ -57,13 +61,13 @@ defmodule SafeExStruct do
     end
   end
 
+  #COND ORDER IS IMPORTANT!!!
   def typeof(self) do
     cond do
+      is_nil(self)        -> :nil
       is_atom(self)       -> :atom
-      is_bitstring(self)  -> cond do
-                                is_binary(self) -> :binary
-                                true            -> :bitstring
-                             end
+      is_binary(self)     -> :binary
+      is_bitstring(self)  -> :bitstring
       is_boolean(self)    -> :boolean
       is_float(self)      -> :float
       is_function(self)   -> :function
@@ -77,7 +81,6 @@ defmodule SafeExStruct do
                                         end
                                 _ -> :map
                              end
-      is_nil(self)        -> :nil
       is_pid(self)        -> :pid
       is_port(self)       -> :port
       is_reference(self)  -> :reference
@@ -116,6 +119,7 @@ defmodule SafeExStruct do
             |> Enum.all?(fn x -> is_compatible(elem(x, 0), elem(x, 1)) end))
           _ -> false
         end
+      {:nil, t} -> t2 == :nil || is_compatible(t, t2)
       _ -> t1 == t2
     end
   end

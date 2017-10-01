@@ -33,7 +33,18 @@ defmodule OptionalFieldsTest do
     }
 
     use SafeExStruct
-    
+
+  end
+
+  defmodule OptionalNilStruct do
+
+    @fields %{
+      s: :binary,
+      n: {:number, :optional, nil}
+    }
+
+    use SafeExStruct
+
   end
 
   test "create/1 should create a valid struct if optional fields are not specified" do
@@ -73,6 +84,14 @@ defmodule OptionalFieldsTest do
     assert also_good_optional_tuple_struct.l2 == [4,5,6]
     assert OptionalListStruct.is_valid(also_good_optional_tuple_struct)
     assert {:error, :invalid_args} == OptionalListStruct.create(%{s: "name", l1: ["hi", 1], l2: [1.0,2.0,3.0]})
+  end
+
+  test "optional field work with nil value" do
+    assert OptionalSimpleStruct.create(%{s: "name", n: nil}) == {:error, :invalid_args}
+    {:ok, good_optional_tuple_struct} = OptionalNilStruct.create(%{s: "name"})
+    assert OptionalNilStruct.is_valid(good_optional_tuple_struct)
+    {:ok, good_optional_tuple_struct} = OptionalNilStruct.create(%{s: "name", n: nil})
+    assert OptionalNilStruct.is_valid(good_optional_tuple_struct)
   end
 
 end

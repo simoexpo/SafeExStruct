@@ -37,7 +37,7 @@ defmodule SafeExStructTest do
     @fields %{
       string: :binary,
       num: :number,
-      other: SimpleStruct
+      other: SimpleStruct #TODO check!
     }
 
     use SafeExStruct
