@@ -5,7 +5,7 @@ defmodule SafeExStructTest do
   defmodule SimpleStruct do
     require SafeExStruct
 
-    @safe_struct %{
+    @fields %{
       string: :binary,
       num: :integer
     }
@@ -16,7 +16,7 @@ defmodule SafeExStructTest do
   defmodule NumberStruct do
     require SafeExStruct
 
-    @safe_struct %{
+    @fields %{
       num: :number
     }
 
@@ -26,7 +26,7 @@ defmodule SafeExStructTest do
   defmodule BitstringStruct do
     require SafeExStruct
 
-    @safe_struct %{
+    @fields %{
       string: :bitstring
     }
 
@@ -36,7 +36,7 @@ defmodule SafeExStructTest do
   defmodule ComplexStruct do
     require SafeExStruct
 
-    @safe_struct %{
+    @fields %{
       string: :binary,
       num: :number,
       other: SimpleStruct
@@ -48,7 +48,7 @@ defmodule SafeExStructTest do
   defmodule SimpleTupleStruct do
     require SafeExStruct
 
-    @safe_struct %{
+    @fields %{
       s: :binary,
       t: :tuple
     }
@@ -59,7 +59,7 @@ defmodule SafeExStructTest do
   defmodule AdvancedTupleStruct do
     require SafeExStruct
 
-    @safe_struct %{
+    @fields %{
       s: :binary,
       t: {:tuple, {:binary, :integer}}
     }
@@ -70,7 +70,7 @@ defmodule SafeExStructTest do
   defmodule SimpleListStruct do
     require SafeExStruct
 
-    @safe_struct %{
+    @fields %{
       s: :binary,
       l: :list
     }
@@ -81,7 +81,7 @@ defmodule SafeExStructTest do
   defmodule AdvancedListStruct do
     require SafeExStruct
 
-    @safe_struct %{
+    @fields %{
       s: :binary,
       l: {:list, :integer}
     }
@@ -92,7 +92,7 @@ defmodule SafeExStructTest do
   defmodule StructAdvancedListStruct do
     require SafeExStruct
 
-    @safe_struct %{
+    @fields %{
       s: :binary,
       l: {:list, SimpleStruct}
     }

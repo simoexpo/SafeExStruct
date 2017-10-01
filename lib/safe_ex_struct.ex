@@ -10,7 +10,7 @@ defmodule SafeExStruct do
           end)
           #|> IO.inspect
           |> Enum.map(fn x ->
-            SafeExStruct.is_compatible(Map.get(@safe_struct, elem(x,0)), elem(x, 1))
+            SafeExStruct.is_compatible(Map.get(@fields, elem(x,0)), elem(x, 1))
           end)
           #|> IO.inspect
           |> Enum.concat([Map.get(unquote(x), :__struct__) == quote do unquote(__MODULE__) end])
@@ -23,7 +23,7 @@ defmodule SafeExStruct do
 
   defmacro generate do
     quote do
-      defstruct Map.keys(@safe_struct)
+      defstruct Map.keys(@fields)
 
       def is_valid(quote do unquote(x) end) do
         SafeExStruct.is_valid(quote do unquote(x) end)
@@ -31,7 +31,7 @@ defmodule SafeExStruct do
 
       def create(quote do unquote(x) end) do
         cond do
-          length(Map.keys(quote do unquote(x) end)) == length(Map.keys(@safe_struct)) ->
+          length(Map.keys(quote do unquote(x) end)) == length(Map.keys(@fields)) ->
             new_struct = struct(quote do unquote(__MODULE__) end, quote do unquote(x) end)
             if is_valid(new_struct) do
               {:ok, new_struct}
