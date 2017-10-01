@@ -21,14 +21,14 @@ defmodule SafeExStruct do
                                     {key, val}
                                   else
                                     raise ArgumentError,
-                                      message: "In module #{__MODULE__}default value #{inspect(val)} should have type #{inspect(t)}"
+                                      message: "In module #{__MODULE__}default value #{inspect(val)} should have type #{inspect(t)}."
                                   end
                                 _ -> nil
                               end
                             end) |> Enum.filter(fn x -> x != nil end)
                             |> Map.new
 
-      def is_valid(x) do
+      def is_valid(x = %__MODULE__{}) do
           Map.from_struct(x)
           |> Enum.map(fn x ->
             unquote(__MODULE__).typeof(elem(x,1))
@@ -42,7 +42,12 @@ defmodule SafeExStruct do
           |> Enum.all?(fn x -> x == true end)
       end
 
-      def create(x) do
+      def is_valid(x) do
+        raise ArgumentError,
+          message: "#{inspect(x)} is not a valid #{__MODULE__} struct."
+      end
+
+      def create(x = %{}) do
         new_map = @optional_fields |> Map.merge(x)
         cond do
           map_size(new_map) == map_size(@fields) ->
@@ -56,6 +61,11 @@ defmodule SafeExStruct do
           true ->
             {:error, :invalid_args}
         end
+      end
+
+      def create(x) do
+        raise ArgumentError,
+          message: "#{__MODULE__}.create/1 requires a map but found: #{inspect(x)}."
       end
 
     end
