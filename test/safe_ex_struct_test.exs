@@ -45,7 +45,18 @@ defmodule SafeExStructTest do
     SafeExStruct.generate
   end
 
-  defmodule TupleStruct do
+  defmodule SimpleTupleStruct do
+    require SafeExStruct
+
+    @safe_struct %{
+      s: :binary,
+      t: :tuple
+    }
+
+    SafeExStruct.generate
+  end
+
+  defmodule AdvancedTupleStruct do
     require SafeExStruct
 
     @safe_struct %{
@@ -97,11 +108,18 @@ defmodule SafeExStructTest do
     assert ComplexStruct.is_valid(bad_complex_struct) == false
   end
 
-  test "is_valid/1 should check types pf tuple elements" do
-    good_tuple_struct = %TupleStruct{s: "s", t: {"1", 1}}
-    bad_tuple_struct = %TupleStruct{s: "s", t: {1, 1}}
-    assert TupleStruct.is_valid(good_tuple_struct)
-    assert TupleStruct.is_valid(bad_tuple_struct) == false
+  test "is_valid/1 should check types of tuple elements if specified in @safe_struct" do
+    good_tuple_struct = %AdvancedTupleStruct{s: "s", t: {"1", 1}}
+    bad_tuple_struct = %AdvancedTupleStruct{s: "s", t: {1, 1}}
+    assert AdvancedTupleStruct.is_valid(good_tuple_struct)
+    assert AdvancedTupleStruct.is_valid(bad_tuple_struct) == false
+  end
+
+  test "is_valid/1 should not check types pf tuple elements if not specified in @safe_struct" do
+    good_tuple_struct = %SimpleTupleStruct{s: "s", t: {"1", 1}}
+    bad_tuple_struct = %SimpleTupleStruct{s: "s", t: {1, 1}}
+    assert SimpleTupleStruct.is_valid(good_tuple_struct)
+    assert SimpleTupleStruct.is_valid(bad_tuple_struct)
   end
 
 end

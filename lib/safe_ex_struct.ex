@@ -80,6 +80,11 @@ defmodule SafeExStruct do
     case t1 do
       :number     -> t2 == :number || t2 == :integer || t2 == :float
       :bitstring  -> t2 == :bitstring || t2 == :binary
+      :tuple      ->
+        case t2 do
+          {:tuple, _} -> true
+          _ -> false
+        end
       {:tuple, t1_types} when is_tuple(t1_types) ->
         case t2 do
           {:tuple, t2_types} when is_tuple(t1_types) ->
