@@ -28,12 +28,11 @@ defmodule SafeExStruct do
       def is_valid(x) do
           Map.from_struct(x)
           |> Enum.map(fn x ->
-            {elem(x, 0), unquote(__MODULE__).typeof(elem(x,1))}
+            unquote(__MODULE__).typeof(elem(x,1))
           end)
+          |> Enum.zip(Map.values(@fields_types))
           #|> IO.inspect
-          |> Enum.map(fn x ->
-            unquote(__MODULE__).is_compatible(Map.get(@fields_types, elem(x,0)), elem(x, 1))
-          end)
+          |> Enum.map(fn x -> unquote(__MODULE__).is_compatible(elem(x, 1), elem(x, 0)) end)
           #|> IO.inspect
           |> Enum.concat([Map.get(x, :__struct__) == __MODULE__])
           #|> IO.inspect
@@ -43,7 +42,7 @@ defmodule SafeExStruct do
       def create(x) do
         new_map = @optional_fields |> Map.merge(x)
         cond do
-          length(Map.keys(new_map)) == length(Map.keys(@fields)) ->
+          map_size(new_map) == map_size(@fields) ->
             new_struct = struct(__MODULE__, new_map)
             if is_valid(new_struct) do
               {:ok, new_struct}

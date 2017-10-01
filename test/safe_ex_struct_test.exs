@@ -41,24 +41,24 @@ defmodule SafeExStructTest do
     }
 
     use SafeExStruct
-    
+
   end
 
-  test "SafeExStruct.generate/0 add to a module a struct definition based on @safe_struct map" do
+  test "use SafeExStruct add to a module a struct definition based on @safe_struct map" do
     struct = %SimpleStruct{}
     assert Map.has_key?(struct, :string)
     assert Map.has_key?(struct, :num)
     assert Map.has_key?(struct, :invalid_key) == false
   end
 
-  test "SafeExStruct.generate/0 add to a module a function is_valid that can validate the defined struct" do
+  test "use SafeExStruct add to a module a function is_valid that can validate the defined struct" do
     good_struct = %SimpleStruct{string: "name", num: 18}
     bad_struct = %SimpleStruct{}
     assert SimpleStruct.is_valid(good_struct)
     assert SimpleStruct.is_valid(bad_struct) == false
   end
 
-  test "SafeExStruct.generate/0 add to a module a function create_struct that create a struct from a map only if it's valid" do
+  test "use SafeExStruct add to a module a function create_struct that create a struct from a map only if it's valid" do
     good_map = %{string: "name", num: 18}
     bad_map = %{string: "name"}
     also_bad_map = %{string: "name", num: 18, badkey: nil}
