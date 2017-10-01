@@ -39,7 +39,7 @@ defmodule SafeExStruct do
                                     {key, val}
                                   else
                                     raise ArgumentError,
-                                      message: "In module #{__MODULE__}default value #{val} should have type #{t}"
+                                      message: "In module #{__MODULE__}default value #{inspect(val)} should have type #{inspect(t)}"
                                   end
                                 _ -> nil
                               end
@@ -119,9 +119,11 @@ defmodule SafeExStruct do
         end
       {:tuple, t1_types} when is_tuple(t1_types) ->
         case t2 do
-          {:tuple, t2_types} when is_tuple(t1_types) ->
-            List.zip([Tuple.to_list(t1_types), Tuple.to_list(t2_types)])
-            |> Enum.all?(fn x -> is_compatible(elem(x, 0), elem(x, 1)) end)
+          {:tuple, t2_types} when is_tuple(t2_types) ->
+            l1 = Tuple.to_list(t1_types)
+            l2 = Tuple.to_list(t2_types)
+            length(l1) == length(l2) && (List.zip([l1, l2])
+            |> Enum.all?(fn x -> is_compatible(elem(x, 0), elem(x, 1)) end))
           _ -> false
         end
       _ -> t1 == t2
