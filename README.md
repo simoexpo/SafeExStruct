@@ -6,7 +6,7 @@ SafeExStruct is a small library that provides help to **create** and **validate 
 
 ## How does it work?
 
-SafeExStruct uses *macro* to define functions to assist the creation of a struct and check its validity. It requires the user to define a map (`@fields`) containing the struct fields with their relative types and then with the invocation of a single function (`SafeExStruct.generate/0`) it will automatically generate the struct and all the useful functions.
+SafeExStruct uses *macro* to define functions to assist the creation of a struct and check its validity. It requires the user to define a map (`@fields`) containing the struct fields with their relative types and then adding the instruction `use SafeExStruct` will automatically generate the struct and all the useful functions.
 
 ### Module definition:
 
