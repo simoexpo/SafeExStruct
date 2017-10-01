@@ -56,7 +56,7 @@ defmodule SafeExStruct do
       is_float(self)      -> :float
       is_function(self)   -> :function
       is_integer(self)    -> :integer
-      is_list(self)       -> :list
+      is_list(self)       -> {:list, self}
       is_map(self)        -> case self do
                                 %_{} -> if self.__struct__.is_valid(self) do
                                           self.__struct__
@@ -80,6 +80,16 @@ defmodule SafeExStruct do
     case t1 do
       :number     -> t2 == :number || t2 == :integer || t2 == :float
       :bitstring  -> t2 == :bitstring || t2 == :binary
+      :list       ->
+        case t2 do
+          {:list, _} -> true
+          _ -> false
+        end
+      {:list, l1_type} ->
+        case t2 do
+          {:list, l} -> Enum.all?(l, fn x -> l1_type == typeof(x) end)
+          _ -> false
+        end
       :tuple      ->
         case t2 do
           {:tuple, _} -> true
