@@ -25,7 +25,7 @@ end
 
 Explanation:
 * `@fields` define the struct with a map `field_name -> field_type`.
-* `use SafeExStruct` needs to be specified **after** `@field` definition to add the creation and validation functions to the module.
+* `use SafeExStruct` needs to be specified **after** `@fields` definition to add the creation and validation functions to the module.
 
 ### Generated functions:
 
