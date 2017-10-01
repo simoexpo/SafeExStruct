@@ -2,18 +2,17 @@ defmodule OptionalFieldsTest do
   use ExUnit.Case
 
   defmodule OptionalSimpleStruct do
-    require SafeExStruct
 
     @fields %{
       s: :binary,
       n: {:number, :optional, 0}
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
   end
 
   defmodule OptionalTupleStruct do
-    require SafeExStruct
 
     @fields %{
       s: :binary,
@@ -21,11 +20,11 @@ defmodule OptionalFieldsTest do
       t2: {{:tuple, {:binary, :integer}}, :optional, {"a", 0}}
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
   end
 
   defmodule OptionalListStruct do
-    require SafeExStruct
 
     @fields %{
       s: :binary,
@@ -33,7 +32,8 @@ defmodule OptionalFieldsTest do
       l2: {{:list, :integer}, :optional, [1,2,3]}
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+    
   end
 
   test "create/1 should create a valid struct if optional fields are not specified" do

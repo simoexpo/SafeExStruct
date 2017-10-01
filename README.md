@@ -6,27 +6,26 @@ SafeExStruct is a small library that provides help to **create** and **validate 
 
 ## How does it work?
 
-SafeExStruct uses *macro* to define functions to assist the creation of a struct and check its validity. It requires the user to define a map (`@fields`) containing the struct fields with their relative types and then with the invocation of a single function (`SafeExStruct.generate/0`) it will automatically generate the struct and all the usefull fucntions.
+SafeExStruct uses *macro* to define functions to assist the creation of a struct and check its validity. It requires the user to define a map (`@fields`) containing the struct fields with their relative types and then with the invocation of a single function (`SafeExStruct.generate/0`) it will automatically generate the struct and all the useful functions.
 
 ### Module definition:
 
 ```elixir
 defmodule SimpleStruct do
-    require SafeExStruct
 
     @fields %{
       string: :binary,
       num: :integer
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
 end
 ```
 
 Explanation:
-* `require SafeExStruct` needs to be specified to access the `SafeExStruct` macro.
 * `@fields` define the struct with a map `field_name -> field_type`.
-* `SafeExStruct.generate` add the creation and validation functions to the module.
+* `use SafeExStruct` needs to be specified **after** `@field` definition to add the creation and validation functions to the module.
 
 ### Generated functions:
 
@@ -64,14 +63,14 @@ SimpleStruct.create(%{string: "name", num: 1.0})  # -> {:error, :invalid_args}
 #### Simple struct:
 ```elixir
 defmodule SimpleStruct do
-    require SafeExStruct
 
     @fields %{
       string: :binary,
       num: :integer
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
 end
 ```
 Define a struct with two fields `string` and `num` respectively of type `binary` and `integer`.
@@ -79,7 +78,6 @@ Define a struct with two fields `string` and `num` respectively of type `binary`
 #### Struct-field struct:
 ```elixir
 defmodule StructFieldStruct do
-    require SafeExStruct
 
     @fields %{
       string: :binary,
@@ -87,7 +85,8 @@ defmodule StructFieldStruct do
       struct: SimpleStruct
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
 end
 ```
 Define a struct with three fields `string`, `num` and `struct` respectively of type `binary` and `integer` and `SimpleStruct`.
@@ -95,14 +94,14 @@ Define a struct with three fields `string`, `num` and `struct` respectively of t
 #### List-field struct without list type:
 ```elixir
 defmodule SimpleListStruct do
-    require SafeExStruct
 
     @fields %{
       s: :binary,
       l: :list
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
 end
 ```
 Define a struct with two fields `s` and `l` respectively of type `binary` and `list` without specify the list elements type.
@@ -110,14 +109,14 @@ Define a struct with two fields `s` and `l` respectively of type `binary` and `l
 #### List-field struct with list type:
 ```elixir
 defmodule AdvancedListStruct do
-    require SafeExStruct
 
     @fields %{
       s: :binary,
       l: {:list, :integer}
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
 end
 ```
 Define a struct with two fields `s` and `l` respectively of type `binary` and `list` with `integer` elements.
@@ -125,14 +124,14 @@ Define a struct with two fields `s` and `l` respectively of type `binary` and `l
 #### Tuple-field struct without type:
 ```elixir
 defmodule SimpleTupleStruct do
-    require SafeExStruct
 
     @fields %{
       s: :binary,
       t: :tuple
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
 end
 ```
 Define a struct with two fields `s` and `t` respectively of type `binary` and `tuple` without specify the tuple elements types.
@@ -140,14 +139,14 @@ Define a struct with two fields `s` and `t` respectively of type `binary` and `t
 #### Tuple-field struct with type:
 ```elixir
 defmodule AdvancedTupleStruct do
-    require SafeExStruct
 
     @fields %{
       s: :binary,
       t: {:tuple, {:binary, :integer}}
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
 end
 ```
 Define a struct with two fields `s` and `t` respectively of type `binary` and `tuple`. The tuple should have two elements respectively of type `binary` and `integer`.
@@ -155,17 +154,17 @@ Define a struct with two fields `s` and `t` respectively of type `binary` and `t
 #### Optional-field struct
 ```elixir
 defmodule OptionalSimpleStruct do
-    require SafeExStruct
 
     @fields %{
       s: :binary,
       n: {:number, :optional, 0}
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
 end
 ```
-Define a struct with a mandatory field `s` of type `binary` and an optional field `n` of type `number` with defualt value `0`.
+Define a struct with a mandatory field `s` of type `binary` and an optional field `n` of type `number` with default value `0`.
 
 ## Installation
 

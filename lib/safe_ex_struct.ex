@@ -1,27 +1,6 @@
 defmodule SafeExStruct do
 
-  defmacro is_valid(x) do
-    quote do
-      unquote(
-        quote do
-          Map.from_struct(unquote(x))
-          |> Enum.map(fn x ->
-            {elem(x, 0), SafeExStruct.typeof(elem(x,1))}
-          end)
-          #|> IO.inspect
-          |> Enum.map(fn x ->
-            SafeExStruct.is_compatible(Map.get(@fields_types, elem(x,0)), elem(x, 1))
-          end)
-          #|> IO.inspect
-          |> Enum.concat([Map.get(unquote(x), :__struct__) == quote do unquote(__MODULE__) end])
-          #|> IO.inspect
-          |> Enum.all?(fn x -> x == true end)
-        end
-      )
-    end
-  end
-
-  defmacro generate do
+  defmacro __using__(_opts) do
     quote do
       defstruct Map.keys(@fields)
 
@@ -35,7 +14,7 @@ defmodule SafeExStruct do
       @optional_fields @fields |> Map.to_list |> Enum.map(fn x ->
                               case x do
                                 {key, {t, :optional, val}} ->
-                                  if (SafeExStruct.is_compatible(t, SafeExStruct.typeof(val))) do
+                                  if (unquote(__MODULE__).is_compatible(t, unquote(__MODULE__).typeof(val))) do
                                     {key, val}
                                   else
                                     raise ArgumentError,
@@ -46,15 +25,26 @@ defmodule SafeExStruct do
                             end) |> Enum.filter(fn x -> x != nil end)
                             |> Map.new
 
-      def is_valid(quote do unquote(x) end) do
-        SafeExStruct.is_valid(quote do unquote(x) end)
+      def is_valid(x) do
+          Map.from_struct(x)
+          |> Enum.map(fn x ->
+            {elem(x, 0), unquote(__MODULE__).typeof(elem(x,1))}
+          end)
+          #|> IO.inspect
+          |> Enum.map(fn x ->
+            unquote(__MODULE__).is_compatible(Map.get(@fields_types, elem(x,0)), elem(x, 1))
+          end)
+          #|> IO.inspect
+          |> Enum.concat([Map.get(x, :__struct__) == __MODULE__])
+          #|> IO.inspect
+          |> Enum.all?(fn x -> x == true end)
       end
 
-      def create(quote do unquote(x) end) do
-        new_map = @optional_fields |> Map.merge(quote do unquote(x) end)
+      def create(x) do
+        new_map = @optional_fields |> Map.merge(x)
         cond do
           length(Map.keys(new_map)) == length(Map.keys(@fields)) ->
-            new_struct = struct(quote do unquote(__MODULE__) end, new_map)
+            new_struct = struct(__MODULE__, new_map)
             if is_valid(new_struct) do
               {:ok, new_struct}
             else
@@ -64,6 +54,7 @@ defmodule SafeExStruct do
             {:error, :invalid_args}
         end
       end
+
     end
   end
 

@@ -2,38 +2,37 @@ defmodule SafeExStructTest do
   use ExUnit.Case
 
   defmodule SimpleStruct do
-    require SafeExStruct
 
     @fields %{
       string: :binary,
       num: :integer
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
   end
 
   defmodule NumberStruct do
-    require SafeExStruct
 
     @fields %{
       num: :number
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
   end
 
   defmodule BitstringStruct do
-    require SafeExStruct
 
     @fields %{
       string: :bitstring
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+
   end
 
   defmodule ComplexStruct do
-    require SafeExStruct
 
     @fields %{
       string: :binary,
@@ -41,7 +40,8 @@ defmodule SafeExStructTest do
       other: SimpleStruct
     }
 
-    SafeExStruct.generate
+    use SafeExStruct
+    
   end
 
   test "SafeExStruct.generate/0 add to a module a struct definition based on @safe_struct map" do

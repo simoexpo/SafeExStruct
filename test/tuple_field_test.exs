@@ -2,25 +2,23 @@ defmodule TupleFieldsTest do
   use ExUnit.Case
 
   defmodule SimpleTupleStruct do
-    require SafeExStruct
 
     @fields %{
       s: :binary,
       t: :tuple
     }
+    use SafeExStruct
 
-    SafeExStruct.generate
   end
 
   defmodule AdvancedTupleStruct do
-    require SafeExStruct
 
     @fields %{
       s: :binary,
       t: {:tuple, {:binary, :integer}}
     }
-
-    SafeExStruct.generate
+    use SafeExStruct
+    
   end
 
   test "is_valid/1 should check types of tuple elements if specified in @safe_struct" do
