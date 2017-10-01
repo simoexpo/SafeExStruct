@@ -10,7 +10,7 @@ defmodule SafeExStruct do
           end)
           #|> IO.inspect
           |> Enum.map(fn x ->
-            SafeExStruct.is_compatible(Map.get(@fields, elem(x,0)), elem(x, 1))
+            SafeExStruct.is_compatible(Map.get(@fields_types, elem(x,0)), elem(x, 1))
           end)
           #|> IO.inspect
           |> Enum.concat([Map.get(unquote(x), :__struct__) == quote do unquote(__MODULE__) end])
@@ -25,14 +25,36 @@ defmodule SafeExStruct do
     quote do
       defstruct Map.keys(@fields)
 
+      @fields_types @fields |> Map.to_list |> Enum.map(fn x ->
+                    case x do
+                      {key, {t, :optional, _}} -> {key, t}
+                      t -> t
+                    end
+                  end) |> Map.new
+
+      @optional_fields @fields |> Map.to_list |> Enum.map(fn x ->
+                              case x do
+                                {key, {t, :optional, val}} ->
+                                  if (SafeExStruct.is_compatible(t, SafeExStruct.typeof(val))) do
+                                    {key, val}
+                                  else
+                                    raise ArgumentError,
+                                      message: "In module #{__MODULE__}default value #{val} should have type #{t}"
+                                  end
+                                _ -> nil
+                              end
+                            end) |> Enum.filter(fn x -> x != nil end)
+                            |> Map.new
+
       def is_valid(quote do unquote(x) end) do
         SafeExStruct.is_valid(quote do unquote(x) end)
       end
 
       def create(quote do unquote(x) end) do
+        new_map = @optional_fields |> Map.merge(quote do unquote(x) end)
         cond do
-          length(Map.keys(quote do unquote(x) end)) == length(Map.keys(@fields)) ->
-            new_struct = struct(quote do unquote(__MODULE__) end, quote do unquote(x) end)
+          length(Map.keys(new_map)) == length(Map.keys(@fields)) ->
+            new_struct = struct(quote do unquote(__MODULE__) end, new_map)
             if is_valid(new_struct) do
               {:ok, new_struct}
             else
