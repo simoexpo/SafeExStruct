@@ -72,7 +72,7 @@ defmodule SafeExStructTest do
     string_key_map = %{"string" => "name", "num" => 18}
     assert SimpleStruct.create(string_key_map) == {:error, :invalid_args}
 
-    assert SimpleStruct.create(string_key_map, string_key: true) ==
+    assert SimpleStruct.create(string_key_map, allow_string_keys: true) ==
              {:ok, %SimpleStruct{string: "name", num: 18}}
   end
 

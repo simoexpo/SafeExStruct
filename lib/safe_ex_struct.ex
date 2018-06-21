@@ -71,14 +71,14 @@ defmodule SafeExStruct do
           |> List.keyfind(:ignore_unknown_fields, 0, {:ignore_unknown_fields, false})
           |> elem(1)
 
-        string_key =
+        allow_string_keys =
           options
-          |> List.keyfind(:string_key, 0, {:string_key, false})
+          |> List.keyfind(:allow_string_keys, 0, {:allow_string_keys, false})
           |> elem(1)
 
         fields =
           cond do
-            string_key ->
+            allow_string_keys ->
               for {key, val} <- x, into: %{}, do: {String.to_atom(key), val}
 
             true ->
