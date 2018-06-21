@@ -63,10 +63,29 @@ defmodule SafeExStruct do
           message: "#{inspect(x)} is not a valid #{__MODULE__} struct."
       end
 
-      def create(x, ignore_unknown_fields \\ false)
+      def create(x, options \\ [])
 
-      def create(x = %{}, ignore_unknown_fields) do
-        new_map = @optional_fields |> Map.merge(x)
+      def create(x = %{}, options) do
+        ignore_unknown_fields =
+          options
+          |> List.keyfind(:ignore_unknown_fields, 0, {:ignore_unknown_fields, false})
+          |> elem(1)
+
+        string_key =
+          options
+          |> List.keyfind(:string_key, 0, {:string_key, false})
+          |> elem(1)
+
+        fields =
+          cond do
+            string_key ->
+              for {key, val} <- x, into: %{}, do: {String.to_atom(key), val}
+
+            true ->
+              x
+          end
+
+        new_map = @optional_fields |> Map.merge(fields)
 
         cond do
           ignore_unknown_fields || map_size(new_map) == map_size(@fields) ->
@@ -83,7 +102,7 @@ defmodule SafeExStruct do
         end
       end
 
-      def create(x, _ignore_unknown_fields) do
+      def create(x, _options) do
         raise ArgumentError,
           message: "#{__MODULE__}.create/1 requires a map but found: #{inspect(x)}."
       end

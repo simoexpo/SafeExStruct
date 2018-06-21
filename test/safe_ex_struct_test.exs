@@ -64,7 +64,15 @@ defmodule SafeExStructTest do
     redundant_map = %{string: "name", num: 18, redundant_field: "redundant"}
     assert SimpleStruct.create(redundant_map) == {:error, :invalid_args}
 
-    assert SimpleStruct.create(redundant_map, true) ==
+    assert SimpleStruct.create(redundant_map, ignore_unknown_fields: true) ==
+             {:ok, %SimpleStruct{string: "name", num: 18}}
+  end
+
+  test "create/2 can specify if accept string key" do
+    string_key_map = %{"string" => "name", "num" => 18}
+    assert SimpleStruct.create(string_key_map) == {:error, :invalid_args}
+
+    assert SimpleStruct.create(string_key_map, string_key: true) ==
              {:ok, %SimpleStruct{string: "name", num: 18}}
   end
 
