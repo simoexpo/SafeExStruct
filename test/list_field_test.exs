@@ -2,36 +2,30 @@ defmodule ListFieldsTest do
   use ExUnit.Case
 
   defmodule SimpleListStruct do
-
     @fields %{
       s: :binary,
       l: :list
     }
 
     use SafeExStruct
-
   end
 
   defmodule AdvancedListStruct do
-
     @fields %{
       s: :binary,
       l: {:list, :integer}
     }
 
     use SafeExStruct
-
   end
 
   defmodule StructAdvancedListStruct do
-
     @fields %{
       s: :binary,
       l: {:list, SimpleListStruct}
     }
 
     use SafeExStruct
-    
   end
 
   test "is_valid/1 should not check types of list elements if not specified in @safe_struct" do
@@ -53,5 +47,4 @@ defmodule ListFieldsTest do
     assert StructAdvancedListStruct.is_valid(also_good_list_struct)
     assert StructAdvancedListStruct.is_valid(also_bad_list_struct) == false
   end
-
 end

@@ -2,46 +2,39 @@ defmodule SafeExStructTest do
   use ExUnit.Case
 
   defmodule SimpleStruct do
-
     @fields %{
       string: :binary,
       num: :integer
     }
 
     use SafeExStruct
-
   end
 
   defmodule NumberStruct do
-
     @fields %{
       num: :number
     }
 
     use SafeExStruct
-
   end
 
   defmodule BitstringStruct do
-
     @fields %{
       string: :bitstring
     }
 
     use SafeExStruct
-
   end
 
   defmodule ComplexStruct do
-
     @fields %{
       string: :binary,
       num: :number,
-      other: SimpleStruct #TODO check!
+      # TODO check!
+      other: SimpleStruct
     }
 
     use SafeExStruct
-
   end
 
   test "use SafeExStruct add to a module a struct definition based on @safe_struct map" do
@@ -67,6 +60,14 @@ defmodule SafeExStructTest do
     assert SimpleStruct.create(also_bad_map) == {:error, :invalid_args}
   end
 
+  test "create/2 can specify if ignore unknown fields" do
+    redundant_map = %{string: "name", num: 18, redundant_field: "redundant"}
+    assert SimpleStruct.create(redundant_map) == {:error, :invalid_args}
+
+    assert SimpleStruct.create(redundant_map, true) ==
+             {:ok, %SimpleStruct{string: "name", num: 18}}
+  end
+
   test "is_valid/1 should know that integer and float are number" do
     assert NumberStruct.is_valid(%NumberStruct{num: 1})
     assert NumberStruct.is_valid(%NumberStruct{num: 1.2})
@@ -77,12 +78,11 @@ defmodule SafeExStructTest do
   end
 
   test "is_valid/1 should work with nested struct" do
-    good_simple_struct = %SimpleStruct{string: "name", num: 18 }
+    good_simple_struct = %SimpleStruct{string: "name", num: 18}
     bad_simple_struct = %SimpleStruct{}
     good_complex_struct = %ComplexStruct{string: "name", num: 1, other: good_simple_struct}
     bad_complex_struct = %ComplexStruct{string: "name", num: 1, other: bad_simple_struct}
     assert ComplexStruct.is_valid(good_complex_struct)
     assert ComplexStruct.is_valid(bad_complex_struct) == false
   end
-
 end
