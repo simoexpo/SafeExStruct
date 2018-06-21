@@ -30,7 +30,8 @@ Explanation:
 ### Generated functions:
 
 * `is_valid(struct) :: boolean`: returns true if the struct is valid, i.e. if its fields types are the same of the fields types defined in `@fields`.
-* `create(map) :: {:ok, struct} | {:error, :invalid_args}`: creates a type-safe struct given a map `field_name -> value` or return an error if at least one of the given value doesn't suite the field type defined in `@fields`.
+* `create(map, options \\ []) :: {:ok, struct} | {:error, :invalid_args}`: creates a type-safe struct given a map `field_name -> value` or return an error if at least one of the given value doesn't suite the field type defined in `@fields`. 
+
 
 ```elixir
 SimpleStruct.is_valid(%SimpleStruct{string: "name", num: 1})      # -> true
@@ -40,9 +41,17 @@ SimpleStruct.create(%{string: "name", num: 1})    # -> {:ok, %SimpleStruct{strin
 SimpleStruct.create(%{string: "name", num: 1.0})  # -> {:error, :invalid_args}
 ```
 
+The `create/2` method define two options to allow some special behaviour:
+
+* `ignore_unknown_fields: true | false`: allow to ignore the unknown fields when trying to create the struct.
+* `allow_string_keys: true | false`: allow to create a struct from a map with strings keys instead of atoms.
+
+Both these options default to `false`.
+
 ### Available types:
 
 * atom -> `:atom`
+* binary -> `:binary`
 * bitstring -> `:bitstring`
 * boolean -> `:boolean`
 * float -> `:float`
