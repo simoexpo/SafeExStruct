@@ -41,7 +41,7 @@ SimpleStruct.create(%{string: "name", num: 1})    # -> {:ok, %SimpleStruct{strin
 SimpleStruct.create(%{string: "name", num: 1.0})  # -> {:error, :invalid_args}
 ```
 
-The `create/2` method define two options to allow some special behaviour:
+The `create/2` function define two options to allow some special behaviour:
 
 * `ignore_unknown_fields: true | false`: allow to ignore the unknown fields when trying to create the struct.
 * `allow_string_keys: true | false`: allow to create a struct from a map with strings keys instead of atoms.
@@ -180,7 +180,7 @@ Define a struct with a mandatory field `s` of type `binary` and an optional fiel
 ```elixir
 def deps do
   [
-    {:safeexstruct, git: "git://github.com/simoexpo/SafeExStruct.git"}
+    {:safeexstruct, git: "git://github.com/simoexpo/SafeExStruct.git", tag: "v0.3.0"}
   ]
 end
 ```
