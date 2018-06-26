@@ -37,6 +37,21 @@ defmodule SafeExStructTest do
     use SafeExStruct
   end
 
+  defmodule NonSafeStruct do
+    defstruct [:field1, :field2]
+  end
+
+  defmodule NonSafeComplexStruct do
+    @fields %{
+      string: :binary,
+      num: :number,
+      # TODO check!
+      other: NonSafeStruct
+    }
+
+    use SafeExStruct
+  end
+
   test "use SafeExStruct add to a module a struct definition based on @safe_struct map" do
     struct = %SimpleStruct{}
     assert Map.has_key?(struct, :string)
@@ -92,5 +107,15 @@ defmodule SafeExStructTest do
     bad_complex_struct = %ComplexStruct{string: "name", num: 1, other: bad_simple_struct}
     assert ComplexStruct.is_valid(good_complex_struct)
     assert ComplexStruct.is_valid(bad_complex_struct) == false
+  end
+
+  test "is_valid/1 should work with non safe struct" do
+    good_non_safe_complex_struct = %NonSafeComplexStruct{
+      string: "name",
+      num: 18,
+      other: %NonSafeStruct{}
+    }
+
+    assert NonSafeComplexStruct.is_valid(good_non_safe_complex_struct)
   end
 end
