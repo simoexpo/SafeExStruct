@@ -1,5 +1,6 @@
 defmodule SafeExStruct.TypeChecker do
   # COND ORDER IS IMPORTANT!!!
+  @spec typeof(any()) :: atom() | {:list, list(any())} | {:tuple, tuple()}
   def typeof(self) do
     cond do
       is_nil(self) -> nil
@@ -20,6 +21,7 @@ defmodule SafeExStruct.TypeChecker do
     end
   end
 
+  @spec check_map_type(list(any())) :: struct() | :map | :error
   defp check_map_type(field) do
     case field do
       %_{} ->
@@ -45,6 +47,7 @@ defmodule SafeExStruct.TypeChecker do
      |> Enum.reduce({}, &Tuple.append(&2, &1))}
   end
 
+  @spec is_compatible(any(), any()) :: boolean()
   def is_compatible(t1, t2) do
     case t1 do
       :number ->
